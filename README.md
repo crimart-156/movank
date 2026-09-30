@@ -29,8 +29,8 @@ Sistema de ventas offline-first con backend en Go y frontend en SvelteKit.
 **Linux / macOS**
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/movank-sales.git
-cd movank-sales
+git clone https://github.com/crimart-156/movank.git
+cd movank
 
 # 2. Copiar variables de entorno
 cp .env.example .env
@@ -45,8 +45,8 @@ docker compose ps
 **Windows (PowerShell)**
 ```powershell
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/movank-sales.git
-cd movank-sales
+git clone https://github.com/crimart-156/movank.git
+cd movank
 
 # 2. Copiar variables de entorno
 Copy-Item .env.example .env
