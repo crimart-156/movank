@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: movank_postgres
+    restart: unless-stopped
+    networks:
+      - movank_net
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-movank}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-movank_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-movank_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-movank}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+    container_name: movank_dragonfly
+    restart: unless-stopped
+    networks:
+      - movank_net
+    ports:
+      - "6379:6379"
+    ulimits:
+      memlock: -1
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6379", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: movank_backend
+    restart: unless-stopped
+    networks:
+      - movank_net
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-movank}:${POSTGRES_PASSWORD:-movank_secret}@postgres:5432/${POSTGRES_DB:-movank_db}?sslmode=disable
+      REDIS_URL: dragonfly:6379
+      PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      dragonfly:
+        condition: service_healthy
+
+networks:
+  movank_net:
+    driver: bridge
+
+volumes:
+  postgres_data:

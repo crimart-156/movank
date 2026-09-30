@@ -1,0 +1,18 @@
+# Secretos — nunca al repo
+.env
+
+# Backend Go — binarios compilados
+backend/sales-api
+backend/*.exe
+
+# Frontend — generado y dependencias
+frontend/node_modules/
+frontend/.svelte-kit/
+frontend/build/
+
+# El PDF es local, no necesita subir
+Movank_FullStack_PruebaTecnica.pdf
+
+# OS
+.DS_Store
+Thumbs.db
